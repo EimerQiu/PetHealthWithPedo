@@ -34,10 +34,13 @@ class _HiveRecordsScreenState extends State<HiveRecordsScreen> {
                 );
               }
 
+              final recordText =
+                  'Steps: ${record.steps}, Timestamp: ${DateTime.fromMillisecondsSinceEpoch(record.timestamp)}, Raw Data: ${record.rawData}';
+              debugPrint(recordText);
+
               return ListTile(
                 title: Text('Pet Steps Record ${reversedIndex + 1}'),
-                subtitle: SelectableText(
-                    'Steps: ${record.steps}, Timestamp: ${DateTime.fromMillisecondsSinceEpoch(record.timestamp)}, Raw Data: ${record.rawData}'),
+                subtitle: SelectableText(recordText),
                 onTap: () {
                   // Edit the record or navigate to another screen
                 },

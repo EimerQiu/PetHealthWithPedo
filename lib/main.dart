@@ -70,64 +70,64 @@ class _MyAppState extends State<MyApp> {
   final Pet pet =
       Pet(name: 'Candy', sex: 'Female', age: 7, type: 'Labrador', weight: 30.0);
 
-final List<Activity> activities = [
-  Activity(
-      date: DateTime.now().subtract(Duration(days: 1)),
-      steps: 3000,
-      activeTime: 8,
-      sleepTime: 16,
-      calories: 1102,
-      weight: 30.0,
-      hydration: 800),
-  Activity(
-      date: DateTime.now().subtract(Duration(days: 2)),
-      steps: 3500,
-      activeTime: 9,
-      sleepTime: 15,
-      calories: 1200,
-      weight: 30.5,
-      hydration: 896),
-  Activity(
-      date: DateTime.now().subtract(Duration(days: 3)),
-      steps: 3000,
-      activeTime: 7,
-      sleepTime: 17,
-      calories: 1349,
-      weight: 30.0,
-      hydration: 783),
-  Activity(
-      date: DateTime.now().subtract(Duration(days: 4)),
-      steps: 3500,
-      activeTime: 10,
-      sleepTime: 14,
-      calories: 1020,
-      weight: 30.5,
-      hydration: 1092),
-  Activity(
-      date: DateTime.now().subtract(Duration(days: 5)),
-      steps: 3500,
-      activeTime: 6,
-      sleepTime: 18,
-      calories: 1200,
-      weight: 30.5,
-      hydration: 901),
-  Activity(
-      date: DateTime.now().subtract(Duration(days: 6)),
-      steps: 3500,
-      activeTime: 10,
-      sleepTime: 14,
-      calories: 1350,
-      weight: 30.5,
-      hydration: 1036),
-  Activity(
-      date: DateTime.now().subtract(Duration(days: 7)),
-      steps: 3500,
-      activeTime: 8,
-      sleepTime: 16,
-      calories: 600,
-      weight: 30.5,
-      hydration: 849),
-];
+  final List<Activity> activities = [
+    Activity(
+        date: DateTime.now().subtract(Duration(days: 1)),
+        steps: 3000,
+        activeTime: 8,
+        sleepTime: 16,
+        calories: 1102,
+        weight: 30.0,
+        hydration: 800),
+    Activity(
+        date: DateTime.now().subtract(Duration(days: 2)),
+        steps: 3500,
+        activeTime: 9,
+        sleepTime: 15,
+        calories: 1200,
+        weight: 30.5,
+        hydration: 896),
+    Activity(
+        date: DateTime.now().subtract(Duration(days: 3)),
+        steps: 3000,
+        activeTime: 7,
+        sleepTime: 17,
+        calories: 1349,
+        weight: 30.0,
+        hydration: 783),
+    Activity(
+        date: DateTime.now().subtract(Duration(days: 4)),
+        steps: 3500,
+        activeTime: 10,
+        sleepTime: 14,
+        calories: 1020,
+        weight: 30.5,
+        hydration: 1092),
+    Activity(
+        date: DateTime.now().subtract(Duration(days: 5)),
+        steps: 3500,
+        activeTime: 6,
+        sleepTime: 18,
+        calories: 1200,
+        weight: 30.5,
+        hydration: 901),
+    Activity(
+        date: DateTime.now().subtract(Duration(days: 6)),
+        steps: 3500,
+        activeTime: 10,
+        sleepTime: 14,
+        calories: 1350,
+        weight: 30.5,
+        hydration: 1036),
+    Activity(
+        date: DateTime.now().subtract(Duration(days: 7)),
+        steps: 3500,
+        activeTime: 8,
+        sleepTime: 16,
+        calories: 600,
+        weight: 30.5,
+        hydration: 849),
+  ];
 
   // Add the navigation method
   void _navigateToHiveRecordsScreen(BuildContext context) {
@@ -152,6 +152,7 @@ final List<Activity> activities = [
 
   @override
   void dispose() {
+    widget.petStepsRepo.close(); 
     super.dispose();
 
     _vitalTimer?.cancel();
@@ -223,6 +224,9 @@ final List<Activity> activities = [
     _rawSignalStreamSubscription?.cancel();
     _dataStreamSubscription?.cancel();
     _stopVitalsTimer();
+
+    _device?.stopRawSignalStreaming();
+    _cancelRawSignal();
 
     _initialize();
   }
@@ -366,6 +370,7 @@ final List<Activity> activities = [
 
   void _stopVitalsTimer() {
     _vitalTimer?.cancel();
+    _vitalTimer = null;
   }
 
   Widget _buildGyroChart(BuildContext context) {

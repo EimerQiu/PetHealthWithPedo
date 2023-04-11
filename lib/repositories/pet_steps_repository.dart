@@ -1,5 +1,4 @@
-
-import '../models/pet_steps_hive.dart'; 
+import '../models/pet_steps_hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 class PetStepsRepository {
@@ -18,8 +17,15 @@ class PetStepsRepository {
     return _box!.values.toList();
   }
 
-  Future<void> saveRecord(int steps, int timestamp, [String rawData = '']) async {
+  Future<void> saveRecord(int steps, int timestamp,
+      [String rawData = '']) async {
     await initHive(); // Make sure Hive is initialized before accessing the box
-    await _box!.add(PetStepsHive(steps: steps, timestamp: timestamp, rawData: rawData));
+    await _box!.add(
+        PetStepsHive(steps: steps, timestamp: timestamp, rawData: rawData));
+  }
+
+  Future<void> close() async {
+    await _box?.close();
+    _box = null;
   }
 }
