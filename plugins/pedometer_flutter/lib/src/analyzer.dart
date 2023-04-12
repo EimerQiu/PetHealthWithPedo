@@ -29,7 +29,7 @@ class Analyzer {
         .._measureTime();
 
   /// Represents a constant value for threshold used for step counting.
-  static const double threshold = 0.04;
+  static const double threshold = 0.03;
 
   /// Holds the number of steps.
   int? steps;

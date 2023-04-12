@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -36,7 +38,7 @@ class _HiveRecordsScreenState extends State<HiveRecordsScreen> {
 
               final recordText =
                   'Steps: ${record.steps}, Timestamp: ${DateTime.fromMillisecondsSinceEpoch(record.timestamp)}, Raw Data: ${record.rawData}';
-              debugPrint(recordText);
+              log('Pet Steps Record ${reversedIndex + 1}: ${recordText}');
 
               return ListTile(
                 title: Text('Pet Steps Record ${reversedIndex + 1}'),

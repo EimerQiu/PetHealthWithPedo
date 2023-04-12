@@ -9,6 +9,8 @@ class HydrationChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final reversedActivities = activities.reversed.toList();
+    
     return LineChart(
       LineChartData(
         minX: 0,
@@ -20,8 +22,8 @@ class HydrationChart extends StatelessWidget {
           bottomTitles: SideTitles(
             showTitles: true,
             getTitles: (value) {
-              if (value >= 0 && value < activities.length) {
-                final weekday = activities[value.toInt()].date.weekday;
+              if (value >= 0 && value < reversedActivities.length) {
+                final weekday = reversedActivities[value.toInt()].date.weekday;
                 switch (weekday) {
                   case DateTime.monday:
                     return 'Mon';
@@ -52,10 +54,10 @@ class HydrationChart extends StatelessWidget {
         lineBarsData: [
           LineChartBarData(
             spots: List.generate(
-              activities.length,
+              reversedActivities.length,
               (index) => FlSpot(
                 index.toDouble(),
-                activities[index].hydration.toDouble(),
+                reversedActivities[index].hydration.toDouble(),
               ),
             ),
             isCurved: false,

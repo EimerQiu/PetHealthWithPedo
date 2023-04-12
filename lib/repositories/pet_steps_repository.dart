@@ -17,11 +17,18 @@ class PetStepsRepository {
     return _box!.values.toList();
   }
 
-  Future<void> saveRecord(int steps, int timestamp,
+  Future<bool> saveRecord(int steps, int timestamp,
       [String rawData = '']) async {
     await initHive(); // Make sure Hive is initialized before accessing the box
-    await _box!.add(
-        PetStepsHive(steps: steps, timestamp: timestamp, rawData: rawData));
+    try {
+      String timestampKey = timestamp.toString();
+      await _box!.put(
+          timestampKey, PetStepsHive(steps: steps, timestamp: timestamp, rawData: rawData));
+      return true;
+    } catch (e) {
+      print('Error while saving record: $e');
+      return false;
+    }
   }
 
   Future<void> close() async {

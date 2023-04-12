@@ -20,6 +20,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   final petStepsRepo = PetStepsRepository();
+  await petStepsRepo.initHive();
 
   runApp(MyApp(petStepsRepo: petStepsRepo));
 }
@@ -62,6 +63,7 @@ class _MyAppState extends State<MyApp> {
 
   List<GyroDatum> _gyroData = [];
   List<AccDatum> _accData = [];
+  List<AccDatum> _longData = [];
 
   Pipeline? pipeline;
 
@@ -72,7 +74,7 @@ class _MyAppState extends State<MyApp> {
 
   final List<Activity> activities = [
     Activity(
-        date: DateTime.now().subtract(Duration(days: 1)),
+        date: DateTime.now().subtract(Duration(days: 0)),
         steps: 3000,
         activeTime: 8,
         sleepTime: 16,
@@ -80,7 +82,7 @@ class _MyAppState extends State<MyApp> {
         weight: 30.0,
         hydration: 800),
     Activity(
-        date: DateTime.now().subtract(Duration(days: 2)),
+        date: DateTime.now().subtract(Duration(days: 1)),
         steps: 3500,
         activeTime: 9,
         sleepTime: 15,
@@ -88,7 +90,7 @@ class _MyAppState extends State<MyApp> {
         weight: 30.5,
         hydration: 896),
     Activity(
-        date: DateTime.now().subtract(Duration(days: 3)),
+        date: DateTime.now().subtract(Duration(days: 2)),
         steps: 3000,
         activeTime: 7,
         sleepTime: 17,
@@ -96,7 +98,7 @@ class _MyAppState extends State<MyApp> {
         weight: 30.0,
         hydration: 783),
     Activity(
-        date: DateTime.now().subtract(Duration(days: 4)),
+        date: DateTime.now().subtract(Duration(days: 3)),
         steps: 3500,
         activeTime: 10,
         sleepTime: 14,
@@ -104,7 +106,7 @@ class _MyAppState extends State<MyApp> {
         weight: 30.5,
         hydration: 1092),
     Activity(
-        date: DateTime.now().subtract(Duration(days: 5)),
+        date: DateTime.now().subtract(Duration(days: 4)),
         steps: 3500,
         activeTime: 6,
         sleepTime: 18,
@@ -112,7 +114,7 @@ class _MyAppState extends State<MyApp> {
         weight: 30.5,
         hydration: 901),
     Activity(
-        date: DateTime.now().subtract(Duration(days: 6)),
+        date: DateTime.now().subtract(Duration(days: 5)),
         steps: 3500,
         activeTime: 10,
         sleepTime: 14,
@@ -120,7 +122,7 @@ class _MyAppState extends State<MyApp> {
         weight: 30.5,
         hydration: 1036),
     Activity(
-        date: DateTime.now().subtract(Duration(days: 7)),
+        date: DateTime.now().subtract(Duration(days: 6)),
         steps: 3500,
         activeTime: 8,
         sleepTime: 16,
@@ -152,7 +154,7 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void dispose() {
-    widget.petStepsRepo.close(); 
+    widget.petStepsRepo.close();
     super.dispose();
 
     _vitalTimer?.cancel();
@@ -175,6 +177,7 @@ class _MyAppState extends State<MyApp> {
 
     _gyroData = [];
     _accData = [];
+    _longData = [];
 
     _todayTotalSteps = await calculateTodayInitSteps();
 
@@ -182,7 +185,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   void _listenToConnection() {
-    debugPrint('_listenToConnection: connection stream set.......');
+    debugPrint('_listenToConnection: connection stream set....... [${DateTime.now().toIso8601String()}]');
 
     _connectionStreamSubscription =
         _device?.connectionStream?.listen((event) async {
@@ -208,7 +211,7 @@ class _MyAppState extends State<MyApp> {
 
         if (!_gyroAccStreaming) {
           debugPrint(
-              "_listenToConnection: stopRawSignalStreaming - startRawSignalStreaming....");
+              "_listenToConnection: stopRawSignalStreaming - startRawSignalStreaming....[${DateTime.now().toIso8601String()}]");
           await _device?.stopRawSignalStreaming();
           _listenToRawSignal();
           await _device
@@ -256,6 +259,7 @@ class _MyAppState extends State<MyApp> {
           /// Gyro and Acc data
           _gyroData.add((signal as TrasenseGyroAccCombinedDatum).gyro);
           _accData.add(signal.acc);
+          _longData.add(signal.acc);
 
           // debugPrint('acc: ${signal.acc}');
 
@@ -271,12 +275,12 @@ class _MyAppState extends State<MyApp> {
                 addedDataIndexes: <int>[_gyroData.length - 1],
                 removedDataIndexes: <int>[0]);
 
-            // save to Hive every 2 seconds
-            countTimes++;
-            debugPrint("_listenToRawSignal: countTimes = $countTimes");
-            if (countTimes % 50 == 0) {
-              saveStepsHive();
-            }
+          }
+          if (_longData.length > 250) {
+            saveStepsHive();
+
+            //clean again
+            _longData = [];
           }
         }
       }
@@ -322,32 +326,41 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> saveStepsHive() async {
     try {
+      final petStepsRepo = widget.petStepsRepo;
+
       String accDataString = stringSteps();
       int steps = await countPetSteps(accDataString);
+      
       int timestamp = DateTime.now().millisecondsSinceEpoch;
 
-      final petStepsRepo = PetStepsRepository();
-      await petStepsRepo.saveRecord(steps, timestamp, accDataString);
+      //if steps > 0, save in Hive database
+      if (steps > 0) {
+        if (await petStepsRepo.saveRecord(steps, timestamp, accDataString)) {
+            _todayTotalSteps += steps;
 
-      _todayTotalSteps += steps;
+            //clean _longData buffer
+            debugPrint("clean _longData");
+            _longData = [];
+        }
+      }
 
       debugPrint(
-          "saveStepsHive ${steps} ${timestamp} done, _todayTotalSteps = $_todayTotalSteps");
+          "saveStepsHive ${steps} ${timestamp} raw data size(${accDataString.length}) done, _todayTotalSteps = $_todayTotalSteps");
     } catch (e) {
       debugPrint('saveStepsHive: Error while recording steps: $e');
     }
-    setState(() {});
   }
 
   String stringSteps() {
     String accDataString = '';
-    for (AccDatum accDatum in _accData) {
+    for (AccDatum accDatum in _longData) {
       accDataString += '${accDatum.x},${accDatum.y},${accDatum.z};';
     }
     return accDataString;
   }
 
   Future<int> countPetSteps(String accDataString) async {
+
     int petSteps = 0;
 
     debugPrint("countPetSteps from string $accDataString");
@@ -493,7 +506,7 @@ class _MyAppState extends State<MyApp> {
         children: [
           TextButton(
               onPressed: () async {
-                if (_connected1) {
+                if (_connected1 || _status != '') {
                   debugPrint("disconnect onPressed");
                   _cancelRawSignal();
                   _device?.stopRawSignalStreaming();

@@ -10,14 +10,14 @@ class ActivityHistoryCard extends StatelessWidget {
   List<BarChartGroupData> _generateChartData() {
     List<BarChartGroupData> chartData = [];
 
-    for (int i = 0; i < activities.length; i++) {
+    // Iterate through activities in reverse order
+    for (int i = activities.length - 1; i >= 0; i--) {
       chartData.add(
         BarChartGroupData(
-          x: i,
+          x: activities.length - 1 - i,
           barRods: [
             BarChartRodData(
-                y: activities[i].activeTime.toDouble(),
-                colors: [Colors.green]),
+                y: activities[i].activeTime.toDouble(), colors: [Colors.green]),
             BarChartRodData(
                 y: activities[i].sleepTime.toDouble(), colors: [Colors.blue]),
           ],
@@ -57,24 +57,30 @@ class ActivityHistoryCard extends StatelessWidget {
                         color: Colors.black,
                         fontSize: 14,
                       ),
-                      getTitles: (double value) {
-                        switch (value.toInt()) {
-                          case 0:
-                            return 'Mon';
-                          case 1:
-                            return 'Tue';
-                          case 2:
-                            return 'Wed';
-                          case 3:
-                            return 'Thu';
-                          case 4:
-                            return 'Fri';
-                          case 5:
-                            return 'Sat';
-                          case 6:
-                            return 'Sun';
-                          default:
-                            return '';
+                      getTitles: (value) {
+                        int index = activities.length - 1 - value.toInt();
+                        if (index >= 0 && index < activities.length) {
+                          final weekday = activities[index].date.weekday;
+                          switch (weekday) {
+                            case DateTime.monday:
+                              return 'Mon';
+                            case DateTime.tuesday:
+                              return 'Tue';
+                            case DateTime.wednesday:
+                              return 'Wed';
+                            case DateTime.thursday:
+                              return 'Thu';
+                            case DateTime.friday:
+                              return 'Fri';
+                            case DateTime.saturday:
+                              return 'Sat';
+                            case DateTime.sunday:
+                              return 'Sun';
+                            default:
+                              return '';
+                          }
+                        } else {
+                          return '';
                         }
                       },
                       margin: 8,
