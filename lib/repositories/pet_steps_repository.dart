@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 import '../models/pet_steps_hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -26,9 +28,14 @@ class PetStepsRepository {
           timestampKey, PetStepsHive(steps: steps, timestamp: timestamp, rawData: rawData));
       return true;
     } catch (e) {
-      print('Error while saving record: $e');
+      debugPrint('Error while saving record: $e');
       return false;
     }
+  }
+
+  Future<void> clearData() async {
+    await initHive(); // Make sure Hive is initialized before accessing the box
+    await _box?.clear();
   }
 
   Future<void> close() async {

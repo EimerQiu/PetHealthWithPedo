@@ -5,6 +5,7 @@ import 'package:pedometer_flutter/pedometer_flutter.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:trasense/trasense.dart';
 import 'package:trasense_demo/widgets/exercise_goals_card.dart';
+import 'package:trasense_demo/widgets/step_counter.dart';
 
 import 'models/pet.dart';
 import 'models/pet_steps_hive.dart';
@@ -53,7 +54,7 @@ class _MyAppState extends State<MyApp> {
   String _rawSignal = '';
 
   bool _connected1 = false;
-
+  bool _isFiftyStepsStarted = false;
   bool _gyroAccStreaming = false;
 
   Timer? _vitalTimer;
@@ -131,6 +132,14 @@ class _MyAppState extends State<MyApp> {
         hydration: 849),
   ];
 
+  // for step counting method2
+  static const double _stdDevMultiplierAxes = 0.6;
+  static const double _stdDevMultiplierMagnitude = 0.7;
+  static const double _minInterval = 0.4;
+  static const int _samplesPerSecond = 25;
+  static const double _minDifference = 0.5;
+  static const double _smallWaveThreshold = 0.0001;
+
   // Add the navigation method
   void _navigateToHiveRecordsScreen(BuildContext context) {
     debugPrint("_navigateToHiveRecordsScreen");
@@ -185,7 +194,8 @@ class _MyAppState extends State<MyApp> {
   }
 
   void _listenToConnection() {
-    debugPrint('_listenToConnection: connection stream set....... [${DateTime.now().toIso8601String()}]');
+    debugPrint(
+        '_listenToConnection: connection stream set....... [${DateTime.now().toIso8601String()}]');
 
     _connectionStreamSubscription =
         _device?.connectionStream?.listen((event) async {
@@ -274,7 +284,6 @@ class _MyAppState extends State<MyApp> {
             _chartSeriesController?.updateDataSource(
                 addedDataIndexes: <int>[_gyroData.length - 1],
                 removedDataIndexes: <int>[0]);
-
           }
           if (_longData.length > 250) {
             saveStepsHive();
@@ -289,6 +298,60 @@ class _MyAppState extends State<MyApp> {
 
       setState(() {});
     });
+  }
+
+// for dataset collection
+  Future<void> fiftyClickStart() async {
+    debugPrint("fiftyClickStart....");
+    final petStepsRepo = widget.petStepsRepo;
+
+    String accDataString = 'fiftyClickStart';
+    // int steps = await countPetSteps(accDataString);
+    int steps = 1;
+    int timestamp = DateTime.now().millisecondsSinceEpoch;
+
+    if (await petStepsRepo.saveRecord(steps, timestamp, accDataString)) {
+      //clean _longData buffer
+      debugPrint("clean _longData");
+      _longData = [];
+    }
+  }
+
+// for dataset collection
+  Future<void> fiftyClickSave() async {
+    debugPrint("fiftyClickSave....");
+
+    final petStepsRepo = widget.petStepsRepo;
+
+    String accDataString = stringSteps();
+    // int steps = await countPetSteps(accDataString);
+    int steps = await countStepsMain(
+        accDataString,
+        _stdDevMultiplierAxes,
+        _stdDevMultiplierMagnitude,
+        _minInterval,
+        _samplesPerSecond,
+        _minDifference,
+        _smallWaveThreshold);
+
+    int timestamp = DateTime.now().millisecondsSinceEpoch;
+
+    if (await petStepsRepo.saveRecord(steps, timestamp, accDataString)) {
+      debugPrint("fiftyClickSave: saveRecord: steps = ${steps}");
+      _todayTotalSteps += steps;
+    }
+
+    debugPrint("fiftyClickSave: fiftyClickStop....");
+    accDataString = 'fiftyClickStop';
+    // int steps = await countPetSteps(accDataString);
+    steps = 1;
+    timestamp = DateTime.now().millisecondsSinceEpoch;
+
+    if (await petStepsRepo.saveRecord(steps, timestamp, accDataString)) {
+      //clean _longData buffer
+      debugPrint("fiftyClickSave: after saveRecord: clean _longData");
+      _longData = [];
+    }
   }
 
   void _cancelRawSignal() {
@@ -329,18 +392,26 @@ class _MyAppState extends State<MyApp> {
       final petStepsRepo = widget.petStepsRepo;
 
       String accDataString = stringSteps();
-      int steps = await countPetSteps(accDataString);
-      
+      // int steps = await countPetSteps(accDataString);
+      int steps = await countStepsMain(
+          accDataString,
+          _stdDevMultiplierAxes,
+          _stdDevMultiplierMagnitude,
+          _minInterval,
+          _samplesPerSecond,
+          _minDifference,
+          _smallWaveThreshold);
+
       int timestamp = DateTime.now().millisecondsSinceEpoch;
 
       //if steps > 0, save in Hive database
       if (steps > 0) {
         if (await petStepsRepo.saveRecord(steps, timestamp, accDataString)) {
-            _todayTotalSteps += steps;
+          _todayTotalSteps += steps;
 
-            //clean _longData buffer
-            debugPrint("clean _longData");
-            _longData = [];
+          //clean _longData buffer
+          debugPrint("clean _longData");
+          _longData = [];
         }
       }
 
@@ -360,7 +431,6 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<int> countPetSteps(String accDataString) async {
-
     int petSteps = 0;
 
     debugPrint("countPetSteps from string $accDataString");
@@ -610,13 +680,56 @@ class _MyAppState extends State<MyApp> {
                   const Text('(C) 2023 Popular Health, LLC'),
                   const SizedBox(height: 30),
                   Builder(
-                    builder: (BuildContext context) {
-                      return ElevatedButton(
-                        onPressed: () => _navigateToHiveRecordsScreen(context),
-                        child: Text('View Hive Records'),
+                    builder: (BuildContext snackBarContext) {
+                      return Column(
+                        children: [
+                          ElevatedButton(
+                            onPressed: () =>
+                                _navigateToHiveRecordsScreen(snackBarContext),
+                            child: Text('View Hive Records'),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              setState(() {
+                                _isFiftyStepsStarted = !_isFiftyStepsStarted;
+                              });
+
+                              if (_isFiftyStepsStarted) {
+                                fiftyClickStart();
+                              } else {
+                                fiftyClickSave();
+                              }
+                            },
+                            child: Text(
+                              _isFiftyStepsStarted
+                                  ? '50 steps stop'
+                                  : '50 steps start',
+                              style:
+                                  TextStyle(fontSize: 14, color: Colors.blue),
+                            ),
+                          ),
+                          const SizedBox(height: 30),
+                          TextButton(
+                            onPressed: () async {
+                              await petStepsRepo.clearData();
+                              // Use the snackBarContext for showing the SnackBar
+                              ScaffoldMessenger.of(snackBarContext)
+                                  .showSnackBar(
+                                const SnackBar(
+                                  content: Text('Data cleared from the box.'),
+                                ),
+                              );
+                            },
+                            child: Text(
+                              'Clear Data',
+                              style: TextStyle(fontSize: 14, color: Colors.red),
+                            ),
+                          ),
+                        ],
                       );
                     },
                   ),
+                  const SizedBox(height: 30),
                 ],
               ),
             ),
