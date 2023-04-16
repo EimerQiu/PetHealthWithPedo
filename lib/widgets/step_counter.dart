@@ -79,13 +79,14 @@ int countSteps(List<double> data, double threshold, double minInterval,
 }
 
 int countStepsMain(
-    String dataStr,
-    double stdDevMultiplierAxes,
-    double stdDevMultiplierMagnitude,
-    double minInterval,
-    int samplesPerSecond,
-    double minDifference,
-    double smallWaveThreshold) {
+  String dataStr, {
+  double stdDevMultiplierAxes = 0.6,
+  double stdDevMultiplierMagnitude = 0.7,
+  double minInterval = 0.4,
+  int samplesPerSecond = 25,
+  double minDifference = 0.5,
+  double smallWaveThreshold = 0.0001,
+}) {
   List<Tuple2<double, double>> data = parseData(dataStr);
 
   List<double> variances = calculateVariance(data);

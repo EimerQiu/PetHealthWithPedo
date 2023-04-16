@@ -43,8 +43,8 @@ class _MyAppState extends State<MyApp> {
   final String _modelName = 'S6';
 
   final String _macAddress1 = 'D45B8D9572EB';
-  final String _macAddress2 = 'C3E17417B4CD';
-  final String _macAddress3 = 'CA6E5E7D70BA';
+  // final String _macAddress2 = 'C3E17417B4CD';
+  // final String _macAddress3 = 'CA6E5E7D70BA';
 
   TrasenseDevice? _device;
 
@@ -327,12 +327,12 @@ class _MyAppState extends State<MyApp> {
     // int steps = await countPetSteps(accDataString);
     int steps = await countStepsMain(
         accDataString,
-        _stdDevMultiplierAxes,
-        _stdDevMultiplierMagnitude,
-        _minInterval,
-        _samplesPerSecond,
-        _minDifference,
-        _smallWaveThreshold);
+        stdDevMultiplierAxes: _stdDevMultiplierAxes,
+        stdDevMultiplierMagnitude: _stdDevMultiplierMagnitude,
+        minInterval: _minInterval,
+        samplesPerSecond: _samplesPerSecond,
+        minDifference: _minDifference,
+        smallWaveThreshold: _smallWaveThreshold);
 
     int timestamp = DateTime.now().millisecondsSinceEpoch;
 
@@ -395,13 +395,13 @@ class _MyAppState extends State<MyApp> {
       // int steps = await countPetSteps(accDataString);
       int steps = await countStepsMain(
           accDataString,
-          _stdDevMultiplierAxes,
-          _stdDevMultiplierMagnitude,
-          _minInterval,
-          _samplesPerSecond,
-          _minDifference,
-          _smallWaveThreshold);
-
+        stdDevMultiplierAxes: _stdDevMultiplierAxes,
+        stdDevMultiplierMagnitude: _stdDevMultiplierMagnitude,
+        minInterval: _minInterval,
+        samplesPerSecond: _samplesPerSecond,
+        minDifference: _minDifference,
+        smallWaveThreshold: _smallWaveThreshold);
+        
       int timestamp = DateTime.now().millisecondsSinceEpoch;
 
       //if steps > 0, save in Hive database
