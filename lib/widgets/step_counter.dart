@@ -1,57 +1,62 @@
-import 'package:flutter/material.dart';
+import 'dart:math';
 import 'package:tuple/tuple.dart';
-import 'dart:math' as math;
 
-List<Tuple2<double, double>> parseData(String dataStr) {
-  int startIndex = dataStr.indexOf(']') + 1;
-  List<String> points = dataStr.substring(startIndex).split(';');
-  List<Tuple2<double, double>> data = points
+int trueStep(String dataStr) {
+  if (dataStr[0] == '[') {
+    int startIndex = dataStr.indexOf('[') + 1;
+    int endIndex = dataStr.indexOf(']') + 1;
+    int trueStepCount = int.parse(dataStr.substring(startIndex, endIndex));
+    return trueStepCount;
+  } else {
+    return 999;
+  }
+}
+
+List<Tuple3<double, double, double>> parseData(String dataStr) {
+  List<String> points;
+  if (dataStr[0] == '[') {
+    int startIndex = dataStr.indexOf(']') + 1;
+    points = dataStr.substring(startIndex).split(';');
+  } else {
+    points = dataStr.split(';');
+  }
+  List<Tuple3<double, double, double>> data = points
       .where((point) => point.isNotEmpty)
-      .map((point) => Tuple2<double, double>(
-            double.parse(point.split(',')[0]),
-            double.parse(point.split(',')[1]),
-          ))
+      .map((point) => Tuple3<double, double, double>.fromList(
+          point.split(',').map((value) => double.parse(value)).toList()))
       .toList();
   return data;
 }
 
-List<double> calculateVariance(List<Tuple2<double, double>> data) {
-  int n = data.length;
-  Tuple2<double, double> mean = Tuple2(
-    data.map((point) => point.item1).reduce((a, b) => a + b) / n,
-    data.map((point) => point.item2).reduce((a, b) => a + b) / n,
-  );
+List<double> calculateVariance(List<Tuple3<double, double, double>> data) {
+  int length = data.length;
+  double meanX = data.fold<double>(
+          0, (previousValue, element) => previousValue + element.item1) /
+      length;
+  double meanY = data.fold<double>(
+          0, (previousValue, element) => previousValue + element.item2) /
+      length;
+  double meanZ = data.fold<double>(
+          0, (previousValue, element) => previousValue + element.item3) /
+      length;
 
-  List<double> variances = [
-    data
-            .map((point) => math.pow(point.item1 - mean.item1, 2))
-            .reduce((a, b) => a + b) /
-        n,
-    data
-            .map((point) => math.pow(point.item2 - mean.item2, 2))
-            .reduce((a, b) => a + b) /
-        n,
-  ];
-  return variances;
-}
+  double varX = data.fold<double>(
+          0,
+          (previousValue, element) =>
+              previousValue + pow(element.item1 - meanX, 2)) /
+      length;
+  double varY = data.fold<double>(
+          0,
+          (previousValue, element) =>
+              previousValue + pow(element.item2 - meanY, 2)) /
+      length;
+  double varZ = data.fold<double>(
+          0,
+          (previousValue, element) =>
+              previousValue + pow(element.item3 - meanZ, 2)) /
+      length;
 
-List<double> lowPassFilter(List<double> data, double alpha) {
-  List<double> filteredData =
-      List<double>.filled(data.length, 0, growable: false);
-  filteredData[0] = data[0];
-
-  for (int i = 1; i < data.length; i++) {
-    filteredData[i] = alpha * data[i] + (1 - alpha) * filteredData[i - 1];
-  }
-
-  return filteredData;
-}
-
-List<double> removeGravity(List<double> data, double alpha) {
-  List<double> gravity = lowPassFilter(data, alpha);
-  List<double> gravityRemovedData = List<double>.generate(
-      data.length, (index) => data[index] - gravity[index]);
-  return gravityRemovedData;
+  return [varX, varY, varZ];
 }
 
 int countSteps(List<double> data, double threshold, double minInterval,
@@ -78,6 +83,36 @@ int countSteps(List<double> data, double threshold, double minInterval,
   return steps;
 }
 
+List<Tuple3<double, double, double>> lowPassFilter(
+    List<Tuple3<double, double, double>> data, double alpha) {
+  List<Tuple3<double, double, double>> filteredData = List.generate(
+      data.length, (index) => Tuple3<double, double, double>(0, 0, 0));
+
+  filteredData[0] = data[0];
+  for (int i = 1; i < data.length; i++) {
+    filteredData[i] = Tuple3<double, double, double>(
+      alpha * data[i].item1 + (1 - alpha) * filteredData[i - 1].item1,
+      alpha * data[i].item2 + (1 - alpha) * filteredData[i - 1].item2,
+      alpha * data[i].item3 + (1 - alpha) * filteredData[i - 1].item3,
+    );
+  }
+
+  return filteredData;
+}
+
+List<Tuple3<double, double, double>> removeGravity(
+    List<Tuple3<double, double, double>> data, double alpha) {
+  List<Tuple3<double, double, double>> gravity = lowPassFilter(data, alpha);
+  List<Tuple3<double, double, double>> gravityRemovedData = List.generate(
+      data.length,
+      (index) => Tuple3<double, double, double>(
+            data[index].item1 - gravity[index].item1,
+            data[index].item2 - gravity[index].item2,
+            data[index].item3 - gravity[index].item3,
+          ));
+  return gravityRemovedData;
+}
+
 int countStepsMain(
   String dataStr, {
   double stdDevMultiplierAxes = 0.6,
@@ -87,48 +122,44 @@ int countStepsMain(
   double minDifference = 0.5,
   double smallWaveThreshold = 0.0001,
 }) {
-  List<Tuple2<double, double>> data = parseData(dataStr);
-
-  List<double> variances = calculateVariance(data);
-  int highestVarianceIndex = indexOfMax(variances);
-
-  List<double> highestVarianceAxisData =
-      data.map((point) => point.item1).toList();
-
+  var data = parseData(dataStr);
   double alpha = 0.8;
-  List<double> highestVarianceAxisDataNoGravity =
-      removeGravity(highestVarianceAxisData, alpha);
+  var dataNoGravity = removeGravity(data, alpha);
 
-  double axisMean = mean(highestVarianceAxisDataNoGravity);
-  double axisStd = standardDeviation(highestVarianceAxisDataNoGravity);
+  var variances = calculateVariance(dataNoGravity);
+  int highestVarianceIndex =
+      variances.indexWhere((variance) => variance == variances.reduce(max));
+
+  double axisMean = _mean(dataNoGravity.map((row) => row.item1).toList());
+  double axisStd = _stdDev(dataNoGravity.map((row) => row.item1).toList());
   double threshold = axisMean + stdDevMultiplierAxes * axisStd;
-  int stepsAxes = countSteps(highestVarianceAxisDataNoGravity, threshold,
-      minInterval, samplesPerSecond);
+  int stepsAxes = countSteps(dataNoGravity.map((row) => row.item1).toList(),
+      threshold, minInterval, samplesPerSecond);
 
-  List<double> magnitude = data
-      .map((point) =>
-          math.sqrt(math.pow(point.item1, 2) + math.pow(point.item2, 2)))
+  var magnitude = dataNoGravity
+      .map((row) =>
+          sqrt(row.toList().reduce((sum, value) => sum + value * value)))
       .toList();
-  List<double> magnitudeNoGravity = removeGravity(magnitude, alpha);
 
-  double magnitudeMean = mean(magnitudeNoGravity);
-  debugPrint("Average magnitude($magnitudeMean) ");
+  double magnitudeMean = _mean(magnitude);
   if (magnitudeMean < smallWaveThreshold) {
+    print(
+        'Average magnitude($magnitudeMean) is very small. Skipping step counting.');
     return 0;
   }
 
-  double magnitudeStd = standardDeviation(magnitudeNoGravity);
+  double magnitudeStd = _stdDev(magnitude);
   threshold = magnitudeMean + stdDevMultiplierMagnitude * magnitudeStd;
 
   int stepsMagnitude =
-      countSteps(magnitudeNoGravity, threshold, minInterval, samplesPerSecond);
+      countSteps(magnitude, threshold, minInterval, samplesPerSecond);
 
   String axis = ['X', 'Y', 'Z'][highestVarianceIndex];
-  debugPrint("min_interval: $minInterval, min_difference: $minDifference");
-  debugPrint(
-      "Number of steps using axis $axis (standard deviations:$stdDevMultiplierAxes): $stepsAxes");
-  debugPrint(
-      "Number of steps using magnitude (standard deviations:$stdDevMultiplierMagnitude): $stepsMagnitude");
+  print('min_interval: $minInterval, min_difference: $minDifference');
+  print(
+      'Number of steps using axis $axis (standard deviations:$stdDevMultiplierAxes): $stepsAxes');
+  print(
+      'Number of steps using magnitude (standard deviations:$stdDevMultiplierMagnitude): $stepsMagnitude');
 
   if (stepsAxes < stepsMagnitude * minDifference ||
       stepsMagnitude < stepsAxes * minDifference) {
@@ -138,27 +169,20 @@ int countStepsMain(
   }
 }
 
-double mean(List<double> list) {
-  return list.reduce((a, b) => a + b) / list.length;
-}
-
-double standardDeviation(List<double> list) {
-  double avg = mean(list);
-  double sum = list
-      .map((item) => math.pow(item - avg, 2))
-      .reduce((a, b) => a + b)
-      .toDouble();
-  return math.sqrt(sum / list.length);
-}
-
-int indexOfMax(List<double> list) {
-  int maxIndex = 0;
-  double maxValue = double.negativeInfinity;
-  for (int i = 0; i < list.length; i++) {
-    if (list[i] > maxValue) {
-      maxValue = list[i];
-      maxIndex = i;
-    }
+// Helper functions for calculating mean and standard deviation.
+double _mean(Iterable<double> values) {
+  double sum = 0;
+  int count = 0;
+  for (double value in values) {
+    sum += value;
+    count++;
   }
-  return maxIndex;
+  return sum / count;
+}
+
+double _stdDev(Iterable<double> values) {
+  double meanVal = _mean(values);
+  double sumSquaredDiffs =
+      values.fold(0, (sum, value) => sum + pow(value - meanVal, 2));
+  return sqrt(sumSquaredDiffs / values.length);
 }
