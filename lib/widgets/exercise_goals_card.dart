@@ -14,6 +14,7 @@ class ExerciseGoalsCard extends StatelessWidget {
     final double progressPercentage = (todayTotalSteps / goalSteps) * 100;
 
     return Card(
+      color: Color.fromRGBO(0, 0, 0, 0),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(

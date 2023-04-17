@@ -31,6 +31,7 @@ class ActivityHistoryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      color: Color.fromRGBO(0, 0, 0, 0),
       child: Padding(
         padding: const EdgeInsets.all(5.0),
         child: Column(
@@ -54,7 +55,7 @@ class ActivityHistoryCard extends StatelessWidget {
                       showTitles: true,
                       getTextStyles: (BuildContext context, double value) =>
                           const TextStyle(
-                        color: Colors.black,
+                        color: Colors.white, // Change text color to white,
                         fontSize: 14,
                       ),
                       getTitles: (value) {
@@ -89,7 +90,7 @@ class ActivityHistoryCard extends StatelessWidget {
                       showTitles: true,
                       getTextStyles: (BuildContext context, double value) =>
                           const TextStyle(
-                        color: Colors.black,
+                        color: Colors.white, // Change text color to white
                         fontSize: 10,
                       ),
                       interval: 2,

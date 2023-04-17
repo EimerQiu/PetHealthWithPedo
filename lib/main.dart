@@ -325,8 +325,7 @@ class _MyAppState extends State<MyApp> {
 
     String accDataString = stringSteps();
     // int steps = await countPetSteps(accDataString);
-    int steps = await countStepsMain(
-        accDataString,
+    int steps = await countStepsMain(accDataString,
         stdDevMultiplierAxes: _stdDevMultiplierAxes,
         stdDevMultiplierMagnitude: _stdDevMultiplierMagnitude,
         minInterval: _minInterval,
@@ -393,15 +392,14 @@ class _MyAppState extends State<MyApp> {
 
       String accDataString = stringSteps();
       // int steps = await countPetSteps(accDataString);
-      int steps = await countStepsMain(
-          accDataString,
-        stdDevMultiplierAxes: _stdDevMultiplierAxes,
-        stdDevMultiplierMagnitude: _stdDevMultiplierMagnitude,
-        minInterval: _minInterval,
-        samplesPerSecond: _samplesPerSecond,
-        minDifference: _minDifference,
-        smallWaveThreshold: _smallWaveThreshold);
-        
+      int steps = await countStepsMain(accDataString,
+          stdDevMultiplierAxes: _stdDevMultiplierAxes,
+          stdDevMultiplierMagnitude: _stdDevMultiplierMagnitude,
+          minInterval: _minInterval,
+          samplesPerSecond: _samplesPerSecond,
+          minDifference: _minDifference,
+          smallWaveThreshold: _smallWaveThreshold);
+
       int timestamp = DateTime.now().millisecondsSinceEpoch;
 
       //if steps > 0, save in Hive database
@@ -609,6 +607,8 @@ class _MyAppState extends State<MyApp> {
       title: 'PetHealth Pro',
       theme: ThemeData(
         primarySwatch: Colors.blue,
+        scaffoldBackgroundColor: Colors.black,
+        textTheme: ThemeData.dark().textTheme,
       ),
       home: SafeArea(
         child: Scaffold(
@@ -630,6 +630,7 @@ class _MyAppState extends State<MyApp> {
                   ExerciseGoalsCard(
                       todayTotalSteps: _todayTotalSteps, goalSteps: 3000),
                   Card(
+                    color: Color.fromRGBO(0, 0, 0, 0),
                     margin: EdgeInsets.all(5.0),
                     child: Padding(
                       padding: EdgeInsets.all(5.0),

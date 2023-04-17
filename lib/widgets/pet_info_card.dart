@@ -8,6 +8,7 @@ class PetInfoCard extends StatelessWidget {
 
   Widget build(BuildContext context) {
     return Card(
+      color: Color.fromRGBO(0, 0, 0, 0),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Row(
