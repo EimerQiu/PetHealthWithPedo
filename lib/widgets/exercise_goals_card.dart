@@ -21,10 +21,10 @@ class ExerciseGoalsCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Exercise Goals',
+              'Exercise Goals 锻炼目标',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 16),
+            SizedBox(height: 10),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -66,7 +66,7 @@ class ExerciseGoalsCard extends StatelessWidget {
             ),
             SizedBox(height: 16),
             Text(
-              'Progress: ${progressPercentage.toStringAsFixed(1)}%',
+              'Progress 完成情况: ${progressPercentage.toStringAsFixed(1)}%',
               style: TextStyle(fontSize: 16),
             ),
           ],

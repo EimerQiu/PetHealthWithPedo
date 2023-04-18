@@ -71,7 +71,7 @@ class _MyAppState extends State<MyApp> {
   ChartSeriesController? _chartSeriesController;
 
   final Pet pet =
-      Pet(name: 'Candy', sex: 'Female', age: 7, type: 'Labrador', weight: 30.0);
+      Pet(name: 'Candy', sex: 'Girl', age: 7, type: 'Labrador', weight: 30.0);
 
   final List<Activity> activities = [
     Activity(
@@ -622,23 +622,22 @@ class _MyAppState extends State<MyApp> {
                     height: 30,
                   ),
                   const Text(
-                    'Pet Health Dashboard 爱你的宠物',
+                    'Pet Health Dashboard 宠物健康',
                     style: TextStyle(fontSize: 24),
                   ),
-                  const SizedBox(height: 10),
                   PetInfoCard(pet: pet),
                   ExerciseGoalsCard(
                       todayTotalSteps: _todayTotalSteps, goalSteps: 3000),
                   Card(
                     color: Color.fromRGBO(0, 0, 0, 0),
-                    margin: EdgeInsets.all(5.0),
+                    margin: EdgeInsets.all(2.0),
                     child: Padding(
-                      padding: EdgeInsets.all(5.0),
+                      padding: EdgeInsets.all(2.0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const SizedBox(
-                            height: 5,
+                            height: 2,
                           ),
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.start,

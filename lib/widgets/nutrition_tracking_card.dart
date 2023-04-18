@@ -39,7 +39,7 @@ class NutritionTrackingCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Nutrition Tracking',
+              'Nutrition Tracking 营养记录',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 8),

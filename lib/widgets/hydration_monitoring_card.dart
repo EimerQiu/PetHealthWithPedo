@@ -17,11 +17,11 @@ class HydrationMonitoringCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Hydration Monitoring',
+              'Hydration Monitoring 饮水监测',
               style: TextStyle(
-                fontSize: 24,
+                fontSize: 20,
                 fontWeight: FontWeight.bold,
-                color: Colors.blue,
+                color: Colors.white,
               ),
             ),
             SizedBox(height: 16),
