@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/pet.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class PetInfoCard extends StatelessWidget {
   final Pet pet;
@@ -42,14 +43,14 @@ class PetInfoCard extends StatelessWidget {
                           fontSize:
                               14, // Set the font size for "Pet's name" here
                           fontWeight: FontWeight.bold,
-                          color: Colors.green,
+                          color: Colors.white,
                         ),
                       ),
                       TextSpan(
-                        text: '${pet.name}',
+                        text: ' ${pet.name}',
                         style: TextStyle(
                           fontSize:
-                              18, // Set the font size for the pet's actual name here
+                              18, 
                           fontWeight: FontWeight.bold,
                           color: Colors.blue,
                         ),
@@ -58,13 +59,31 @@ class PetInfoCard extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 2),
-                Text(
-                  '${pet.sex}',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.blue,
-                  ),
+                Row(
+                  children: [
+                    Text(
+                      'Sex: ',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(width: 6),
+                    Icon(
+                      FontAwesomeIcons.venus,
+                      color: Colors.green,
+                      size: 16,
+                    ),
+                    SizedBox(width: 4),
+                    Text(
+                      '${pet.sex}',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.green,
+                      ),
+                    ),
+                  ],
                 ),
                 SizedBox(height: 2),
                 RichText(
@@ -76,11 +95,11 @@ class PetInfoCard extends StatelessWidget {
                           fontSize:
                               14, // Set the font size for "Pet's name" here
                           fontWeight: FontWeight.bold,
-                          color: Colors.green,
+                          color: Colors.white,
                         ),
                       ),
                       TextSpan(
-                        text: '${pet.age}',
+                        text: ' ${pet.age}',
                         style: TextStyle(
                           fontSize:
                               18, // Set the font size for the pet's actual name here
@@ -101,16 +120,16 @@ class PetInfoCard extends StatelessWidget {
                           fontSize:
                               14, // Set the font size for "Pet's name" here
                           fontWeight: FontWeight.bold,
-                          color: Colors.green,
+                          color: Colors.white,
                         ),
                       ),
                       TextSpan(
-                        text: '${pet.type}',
+                        text: ' ${pet.type}',
                         style: TextStyle(
                           fontSize:
                               18, // Set the font size for the pet's actual name here
                           fontWeight: FontWeight.bold,
-                          color: Colors.blue,
+                          color: Colors.green,
                         ),
                       ),
                     ],
@@ -126,11 +145,11 @@ class PetInfoCard extends StatelessWidget {
                           fontSize:
                               14, // Set the font size for "Pet's name" here
                           fontWeight: FontWeight.bold,
-                          color: Colors.green,
+                          color: Colors.white,
                         ),
                       ),
                       TextSpan(
-                        text: '${pet.weight} kg',
+                        text: ' ${pet.weight} kg',
                         style: TextStyle(
                           fontSize:
                               18, // Set the font size for the pet's actual name here

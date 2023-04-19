@@ -50,6 +50,8 @@ dependencies:
   async: ^2.8.2
   provider: ^6.0.5
   tuple: ^2.0.1
+  font_awesome_flutter: ^10.4.0
+
 
 
 dev_dependencies:

@@ -457,7 +457,7 @@ class _MyAppState extends State<MyApp> {
   Widget _buildGyroChart(BuildContext context) {
     return Container(
       height: 200,
-      margin: const EdgeInsets.symmetric(horizontal: 20),
+      margin: const EdgeInsets.symmetric(horizontal: 10),
       child: Card(
         elevation: 5,
         shape: RoundedRectangleBorder(
@@ -515,7 +515,7 @@ class _MyAppState extends State<MyApp> {
   Widget _buildAccChart(BuildContext context) {
     return Container(
       height: 200,
-      margin: const EdgeInsets.symmetric(horizontal: 20),
+      margin: const EdgeInsets.symmetric(horizontal: 10),
       child: Card(
         elevation: 5,
         shape: RoundedRectangleBorder(
@@ -626,8 +626,16 @@ class _MyAppState extends State<MyApp> {
                     style: TextStyle(fontSize: 24),
                   ),
                   PetInfoCard(pet: pet),
+                  Divider(
+                    color: Colors.grey,
+                    thickness: 1.0,
+                  ),
                   ExerciseGoalsCard(
                       todayTotalSteps: _todayTotalSteps, goalSteps: 3000),
+                  Divider(
+                    color: Colors.grey,
+                    thickness: 1.0,
+                  ),
                   Card(
                     color: Color.fromRGBO(0, 0, 0, 0),
                     margin: EdgeInsets.all(2.0),
@@ -662,7 +670,6 @@ class _MyAppState extends State<MyApp> {
                               ),
                             ],
                           ),
-                          const SizedBox(height: 10),
                           _buildGyroChart(context),
                           const SizedBox(height: 10),
                           _buildAccChart(context),
@@ -672,62 +679,125 @@ class _MyAppState extends State<MyApp> {
                     ),
                   ),
                   ActivityHistoryCard(activities: activities),
+                  Divider(
+                    color: Colors.grey,
+                    thickness: 1.0,
+                  ),
                   NutritionTrackingCard(activities: activities),
+                  Divider(
+                    color: Colors.grey,
+                    thickness: 1.0,
+                  ),
                   HydrationMonitoringCard(activities: activities),
                   const SizedBox(height: 30),
-                  const Text(
-                      'This demo app is supported by the following party:'),
-                  const Text('(C) 2023 Popular Health, LLC'),
-                  const SizedBox(height: 30),
+                  Divider(
+                    color: Colors.grey,
+                    thickness: 1.0,
+                  ),
                   Builder(
                     builder: (BuildContext snackBarContext) {
-                      return Column(
-                        children: [
-                          ElevatedButton(
-                            onPressed: () =>
-                                _navigateToHiveRecordsScreen(snackBarContext),
-                            child: Text('View Hive Records'),
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              setState(() {
-                                _isFiftyStepsStarted = !_isFiftyStepsStarted;
-                              });
+                      return Card(
+                        color: Color.fromRGBO(0, 0, 0, 0),
+                        child: Padding(
+                          padding: EdgeInsets.all(16.0),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'For Dataset Collection 数据收集',
+                                style: TextStyle(
+                                    fontSize: 20, fontWeight: FontWeight.bold),
+                              ),
+                              SizedBox(height: 16),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  TextButton(
+                                    onPressed: () =>
+                                        _navigateToHiveRecordsScreen(
+                                            snackBarContext),
+                                    child: Text(
+                                      'View Hive Records',
+                                      style: TextStyle(
+                                        decoration: TextDecoration.underline,
+                                      ),
+                                    ),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        _isFiftyStepsStarted =
+                                            !_isFiftyStepsStarted;
+                                      });
 
-                              if (_isFiftyStepsStarted) {
-                                fiftyClickStart();
-                              } else {
-                                fiftyClickSave();
-                              }
-                            },
-                            child: Text(
-                              _isFiftyStepsStarted
-                                  ? '50 steps stop'
-                                  : '50 steps start',
-                              style:
-                                  TextStyle(fontSize: 14, color: Colors.blue),
-                            ),
+                                      if (_isFiftyStepsStarted) {
+                                        fiftyClickStart();
+                                      } else {
+                                        fiftyClickSave();
+                                      }
+                                    },
+                                    child: Text(
+                                      _isFiftyStepsStarted
+                                          ? '50 steps stop'
+                                          : '50 steps start',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.blue,
+                                        decoration: TextDecoration.underline,
+                                      ),
+                                    ),
+                                  ),
+                                  TextButton(
+                                    onPressed: () async {
+                                      await petStepsRepo.clearData();
+                                      // Use the snackBarContext for showing the SnackBar
+                                      ScaffoldMessenger.of(snackBarContext)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                          content: Text(
+                                              'Data cleared from the box.'),
+                                        ),
+                                      );
+                                    },
+                                    child: Text(
+                                      'Clear Data',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.red,
+                                        decoration: TextDecoration.underline,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
-                          const SizedBox(height: 30),
-                          TextButton(
-                            onPressed: () async {
-                              await petStepsRepo.clearData();
-                              // Use the snackBarContext for showing the SnackBar
-                              ScaffoldMessenger.of(snackBarContext)
-                                  .showSnackBar(
-                                const SnackBar(
-                                  content: Text('Data cleared from the box.'),
-                                ),
-                              );
-                            },
-                            child: Text(
-                              'Clear Data',
-                              style: TextStyle(fontSize: 14, color: Colors.red),
-                            ),
-                          ),
-                        ],
+                        ),
                       );
                     },
+                  ),
+                  Divider(
+                    color: Colors.grey,
+                    thickness: 1.0,
+                  ),
+                  const SizedBox(height: 16),
+                  const Text('邱羽墨 Eimer QIU © 2023 '),
+                  const Text('Grade7 | Huitong School'),
+                  const SizedBox(height: 16),
+                  const Text(
+                      '    This app was developed with the support of OpenAI\'s GPT-4 technology. 本APP在OpenAI GPT-4技术的支持下开发。    '),
+                  const Text(
+                      '    In appreciation of the pedometer and interface module support provided by Popular Health, LLC. 感谢Popular Health, LLC提供的计步器和接口模块支持。   '),
+                  const SizedBox(height: 16),
+                  const Text(
+                    '    Grateful for my teachers, as well as my mom and dad, who are the guiding lights in my life. 感谢我的老师们，还有妈妈和爸爸，他们是我生命中的指路明灯。    ',
+                    style: TextStyle(color: Colors.blue),
+                  ),
+                  const Text(
+                    '    Thankful for my dog Candy and cat Judy, who provide the warmest companionship in my life. 感谢我的狗狗Candy和猫咪Judy，他们是我生活中最温暖的陪伴。    ',
+                    style: TextStyle(color: Colors.blue),
                   ),
                   const SizedBox(height: 30),
                 ],
