@@ -138,7 +138,7 @@ class _MyAppState extends State<MyApp> {
   static const double _minInterval = 0.4;
   static const int _samplesPerSecond = 25;
   static const double _minDifference = 0.5;
-  static const double _smallWaveThreshold = 0.0001;
+  static const double _smallWaveThreshold = 0.01;
 
   // Add the navigation method
   void _navigateToHiveRecordsScreen(BuildContext context) {

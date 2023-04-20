@@ -4,7 +4,7 @@ import 'package:tuple/tuple.dart';
 int trueStep(String dataStr) {
   if (dataStr[0] == '[') {
     int startIndex = dataStr.indexOf('[') + 1;
-    int endIndex = dataStr.indexOf(']') + 1;
+    int endIndex = dataStr.indexOf(']');
     int trueStepCount = int.parse(dataStr.substring(startIndex, endIndex));
     return trueStepCount;
   } else {
@@ -120,28 +120,43 @@ int countStepsMain(
   double minInterval = 0.4,
   int samplesPerSecond = 25,
   double minDifference = 0.5,
-  double smallWaveThreshold = 0.0001,
+  double smallWaveThreshold = 0.01,
 }) {
+
   var data = parseData(dataStr);
+
+  //filter out gravity  去除重力
   double alpha = 0.8;
   var dataNoGravity = removeGravity(data, alpha);
 
+  //calculate variance 计算方差
   var variances = calculateVariance(dataNoGravity);
+
+  //axis with highest variance
   int highestVarianceIndex =
       variances.indexWhere((variance) => variance == variances.reduce(max));
 
-  double axisMean = _mean(dataNoGravity.map((row) => row.item1).toList());
-  double axisStd = _stdDev(dataNoGravity.map((row) => row.item1).toList());
+  // calculate threshold
+  double axisMean = _mean(dataNoGravity.map((row) => row.toList()[highestVarianceIndex] as double).toList());
+  double axisStd = _stdDev(dataNoGravity.map((row) => row.toList()[highestVarianceIndex] as double).toList());
   double threshold = axisMean + stdDevMultiplierAxes * axisStd;
-  int stepsAxes = countSteps(dataNoGravity.map((row) => row.item1).toList(),
-      threshold, minInterval, samplesPerSecond);
 
-  var magnitude = dataNoGravity
-      .map((row) =>
-          sqrt(row.toList().reduce((sum, value) => sum + value * value)))
-      .toList();
+  int stepsAxes = countSteps(dataNoGravity.map((row) => row.toList()[highestVarianceIndex] as double).toList(),
+      threshold, minInterval, samplesPerSecond);
+  print(stepsAxes);
+
+var magnitude = dataNoGravity
+    .map((row) {
+      List<double> rowList = List<double>.from(row.toList().map((value) => value as double));
+      double sumOfSquares = rowList.fold(0.0, (sum, value) => sum + value * value);
+      double magnitudeValue = sumOfSquares == 0 ? 0.0 : sqrt(sumOfSquares);
+      return magnitudeValue;
+    })
+    .toList();
 
   double magnitudeMean = _mean(magnitude);
+  print(
+        'Average magnitude($magnitudeMean)');
   if (magnitudeMean < smallWaveThreshold) {
     print(
         'Average magnitude($magnitudeMean) is very small. Skipping step counting.');
