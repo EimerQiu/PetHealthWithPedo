@@ -40,18 +40,8 @@ Solution:
 3. Ask ChatGPT to write another program for me and try again.
 4. Understand the realistic world and the noise around you to solve the problems and create an APP that can really help people.
 
-![Slide1](https://user-images.githubusercontent.com/129605266/235929039-8216df25-9d38-41d0-a1ca-423a737258a6.jpeg)
-![Slide2](https://user-images.githubusercontent.com/129605266/235929199-5cd34fad-dd23-4004-b5d5-8f5c21dd0bc1.jpeg)
-![Slide3](https://user-images.githubusercontent.com/129605266/235929233-d28830c5-387b-406b-9fae-ba6d3fe7f162.jpeg)
-![Slide4](https://user-images.githubusercontent.com/129605266/235929262-8ef187c9-691d-44ad-8025-5c22422b5034.jpeg)
-![Slide5](https://user-images.githubusercontent.com/129605266/235929299-1b7e417b-dfd7-4d18-b3b2-98e25e0e2ff8.jpeg)
-![Slide6](https://user-images.githubusercontent.com/129605266/235929321-268283f9-ee39-4c91-aef6-43988a3ca8a1.jpeg)
-![Slide7](https://user-images.githubusercontent.com/129605266/235929351-58172ba6-174a-4a05-b4f5-eea03ba8b714.jpeg)
-![Slide8](https://user-images.githubusercontent.com/129605266/235929393-1cca357c-50b8-45d6-883e-e9d2cf1da8b2.jpeg)
-![Slide9](https://user-images.githubusercontent.com/129605266/235929427-4ec0d96d-15e0-415d-9992-99dfacdcec6d.jpeg)
-![Slide10](https://user-images.githubusercontent.com/129605266/235929450-7b1ca0d1-13e9-40a7-a6ed-5283dac7566b.jpeg)
-![Slide11](https://user-images.githubusercontent.com/129605266/235929486-592dbad9-15ee-4eb1-b6f0-800bcf87b92b.jpeg)
-![Slide12](https://user-images.githubusercontent.com/129605266/235929621-3654676a-5166-436a-975e-ff7c3c2988bb.jpeg)
+![Slide1](https://user-images.githubusercontent.com/129605266/235932874-2341fe5d-6d7d-4246-84cf-1fa409b776bf.jpeg)
+![Slide2](https://user-images.githubusercontent.com/129605266/235932914-deb62b19-c800-4ffe-8404-79f19bb96513.jpeg)
+![Slide3](https://user-images.githubusercontent.com/129605266/235932957-7836c571-db08-40c7-8cf0-79264b865ae5.jpeg)
 
-
-
+3.(You will need a pedometer from Popular Health before you connect)Open the APP and click the device name under "Connect Bluetooth"
