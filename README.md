@@ -39,3 +39,5 @@ Solution:
 2. Be more concentrated and check before I move on to then next step.
 3. Ask ChatGPT to write another program for me and try again.
 4. Understand the realistic world and the noise around you to solve the problems and create an APP that can really help people.
+
+![Slide5](https://user-images.githubusercontent.com/129605266/235928697-a0a96eeb-8ac6-4600-8ae5-61f3dddcb2c1.jpeg)
