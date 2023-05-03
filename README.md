@@ -6,9 +6,9 @@ Why I made this product?
 3. Animals are living things too, I feel like we should try out best to protect them.
 
 How open and use the APP
-1.Copy or save the code
-2.Insert the code into the phone
-3.Open the APP and click the device name under "Connect Bluetooth"
+1.Git pull the repo
+2.Run the program into the phone
+3.(You will need a pedometer from Popular Health before you connect)Open the APP and click the device name under "Connect Bluetooth"
 4.After it is connected, you will be able to see different datas
 
 Features
