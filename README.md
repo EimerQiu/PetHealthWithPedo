@@ -40,4 +40,4 @@ Solution:
 3. Ask ChatGPT to write another program for me and try again.
 4. Understand the realistic world and the noise around you to solve the problems and create an APP that can really help people.
 
-![Slide5](https://user-images.githubusercontent.com/129605266/235928697-a0a96eeb-8ac6-4600-8ae5-61f3dddcb2c1.jpeg)
+![Slide1](https://user-images.githubusercontent.com/129605266/235929039-8216df25-9d38-41d0-a1ca-423a737258a6.jpeg)
