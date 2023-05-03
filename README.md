@@ -53,7 +53,6 @@ Solution:
 ![Slide11](https://user-images.githubusercontent.com/129605266/235933382-45205839-2ebf-4202-86e9-b23ba7a44911.jpeg)
 ![Slide12](https://user-images.githubusercontent.com/129605266/235933398-feee1dbc-239b-4ef9-8581-1ffdbbc76a90.jpeg)
 ![Slide13](https://user-images.githubusercontent.com/129605266/235933415-1750e8c2-f19e-4473-8247-c457deed6270.jpeg)
-![Slide14](https://user-images.githubusercontent.com/129605266/235933544-f9d6265b-89bf-4479-862b-6dfb6e70b40e.jpeg)
 ![Slide15](https://user-images.githubusercontent.com/129605266/235933599-780513d7-287a-4097-9982-4b69c30d400e.jpeg)
 ![Slide17](https://user-images.githubusercontent.com/129605266/235933628-656c4447-eef0-4f59-ad8b-5882a6190ed2.jpeg)
 ![Slide18](https://user-images.githubusercontent.com/129605266/235933700-00dd2238-0e3e-4d31-b690-ba0aad57bb41.jpeg)
