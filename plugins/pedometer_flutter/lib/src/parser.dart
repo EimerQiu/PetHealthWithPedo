@@ -100,9 +100,11 @@ class Parser {
       /// [[0.123, -0.123, 5.0], [0.456, -0.789, 0.111], [-0.212, 0.001, 1.0]]
       /// to
       /// [[0.123, -0.123, 5.0], [0.456, -0.789, 0.111], [-0.212, 0.001, 1.0]]
-      final transposed =
-          // ignore: unnecessary_lambdas
-          flattened.transpose.map((e) => List<double>.from(e)).toList();
+      ///
+      // final transposed =
+      //     // ignore: unnecessary_lambdas
+      //     flattened.transpose.map((e) => List<double>.from(e)).toList();
+      final transposed = flattened.map((e) => e as Iterable<double>).toList();
 
       log('---------------------------------------');
 
@@ -110,17 +112,13 @@ class Parser {
 
       /// Filter out gravity
       filteredAcceleration = transposed.map((totalAcceleration) {
-        final gravity = Filter.low0Hz(totalAcceleration);
-
-        /// Zips two lists into a list of lists, where each sublist contains
-        /// one element from each of the input lists.
-        final userAcceleration = List.generate(
+        final gravity = Filter.low0Hz(totalAcceleration.toList());
+        final userAcceleration = List<double>.generate(
           totalAcceleration.length,
-          (i) => totalAcceleration[i] - gravity[i],
+          (i) => totalAcceleration.toList()[i] - gravity[i],
         );
-
         log('${timeStamp} CALC: ${userAcceleration}');
-        return [userAcceleration, gravity];
+        return [userAcceleration, gravity] as List<List<double>>;
       }).toList();
 
       /// Transforms a list of filtered acceleration values into a
